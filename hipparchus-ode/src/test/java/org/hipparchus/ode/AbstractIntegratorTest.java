@@ -25,8 +25,11 @@ import org.hipparchus.ode.events.AdaptableInterval;
 import org.hipparchus.ode.events.ODEEventDetector;
 import org.hipparchus.ode.events.ODEEventHandler;
 import org.hipparchus.ode.nonstiff.EulerIntegrator;
+import org.hipparchus.ode.sampling.ODEStateInterpolator;
+import org.hipparchus.ode.sampling.ODEStepHandler;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AbstractIntegratorTest {
@@ -36,7 +39,7 @@ class AbstractIntegratorTest {
         // GIVEN
         final double finalTime = 1.;
         final EulerIntegrator integrator = new EulerIntegrator(finalTime);
-        final TestDetector detector = new TestDetector();
+        final TestDetector detector = new TestDetector(0.5, Action.RESET_DERIVATIVES);
         integrator.addEventDetector(detector);
         final TestProblem1 testProblem = new TestProblem1();
         final ODEState initialState = new ODEState(0., new double[2]);
@@ -46,8 +49,33 @@ class AbstractIntegratorTest {
         assertTrue(detector.resetted);
     }
 
+
+    @Test
+    void testUpdateStepIsCalledOncePerStepWhileHandleStepIsCalledAtEachEvent() {
+        // GIVEN
+        final double finalTime = 3.;
+        final EulerIntegrator integrator = new EulerIntegrator(finalTime);
+        integrator.addStepHandler(new UpdateStepTestHandler());
+        integrator.addEventDetector(new TestDetector(0.5, Action.CONTINUE));
+        integrator.addEventDetector(new TestDetector(0.6, Action.CONTINUE));
+        final TestProblem1 testProblem = new TestProblem1();
+        final ODEState initialState = new ODEState(0., new double[2]);
+        // WHEN
+        integrator.integrate(testProblem, initialState, finalTime);
+        // THEN
+        assertEquals(1, ((UpdateStepTestHandler) integrator.getStepHandlers().get(0)).getUpdateStepCounter());
+        assertEquals(3, ((UpdateStepTestHandler) integrator.getStepHandlers().get(0)).getHandlerStepCounter());
+    }
+
     private static class TestDetector implements ODEEventDetector {
         boolean resetted = false;
+        double rootTime;
+        Action action;
+
+        public TestDetector(double rootTime, Action action) {
+            this.rootTime = rootTime;
+            this.action = action;
+        }
 
         @Override
         public void reset(ODEStateAndDerivative intermediateState, double finalTime) {
@@ -72,13 +100,37 @@ class AbstractIntegratorTest {
 
         @Override
         public ODEEventHandler getHandler() {
-            return (state, detector, increasing) -> Action.RESET_DERIVATIVES;
+            return (state, detector, increasing) -> action;
         }
 
         @Override
         public double g(ODEStateAndDerivative state) {
-            return state.getTime() - 0.5;
+            return state.getTime() - rootTime;
         }
     }
 
+    
+    private static class UpdateStepTestHandler implements ODEStepHandler {
+
+        private int handlerStepCounter = 0;
+        private int updateStepCounter = 0;
+
+        @Override
+        public void handleStep(ODEStateInterpolator interpolator) {
+            handlerStepCounter++;
+        }
+
+        @Override
+        public void updateOnStep(ODEStateInterpolator interpolator) {
+            updateStepCounter++;
+        }
+
+        public int getHandlerStepCounter() {
+            return handlerStepCounter;
+        }
+
+        public int getUpdateStepCounter() {
+            return updateStepCounter;
+        }
+    }
 }
