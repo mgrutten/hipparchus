@@ -184,4 +184,27 @@ public interface FieldODEIntegrator<T extends CalculusFieldElement<T>> {
                                             FieldODEState<T> initialState, T finalTime)
         throws MathIllegalArgumentException, MathIllegalStateException;
 
+    /** Integrate the differential equations up to the given time.
+     * <p>This method solves an Initial Value Problem (IVP).</p>
+     * <p>Since this method stores some internal state variables made
+     * available in its public interface during integration ({@link
+     * #getCurrentSignedStepsize()}), it is <em>not</em> thread-safe.</p>
+     * @param equations differential equations to integrate
+     * @param initialState initial state (time, primary and secondary state vectors)
+     * @param finalTime target time for the integration
+     * (can be set to a value smaller than {@code t0} for backward integration)
+     * @return final state, its time will be the same as {@code finalTime} if
+     * integration reached its target, but may be different if some {@link
+     * org.hipparchus.ode.events.FieldODEEventHandler} stops it at some point.
+     * @exception MathIllegalArgumentException if integration step is too small
+     * @exception MathIllegalStateException if the number of functions evaluations is exceeded
+     * @exception MathIllegalArgumentException if the location of an event cannot be bracketed
+     * @since 4.0.3
+     */
+    default FieldODEStateAndDerivative<T> integrate(FieldOrdinaryDifferentialEquation<T> equations,
+                                                    FieldODEState<T> initialState, T finalTime)
+            throws MathIllegalArgumentException, MathIllegalStateException {
+        return integrate(new FieldExpandableODE<>(equations), initialState, finalTime);
+    }
+
 }

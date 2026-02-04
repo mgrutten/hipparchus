@@ -323,6 +323,10 @@ public abstract class AbstractFieldIntegrator<T extends CalculusFieldElement<T>>
         // set end of step
         stepEndEventsStates.forEach(s -> s.setStepEnd(currentState.getTime()));
 
+        for (final FieldODEStepHandler<T> handler : stepHandlers) {
+            handler.updateOnStep(interpolator);
+        }
+
         // search for next events that may occur during the step
         final int orderingSign = interpolator.isForward() ? +1 : -1;
         final Queue<FieldEventState<T>> occurringEvents = new PriorityQueue<>(new Comparator<FieldEventState<T>>() {
