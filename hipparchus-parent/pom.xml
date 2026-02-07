@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.hipparchus</groupId>
   <artifactId>hipparchus</artifactId>
-  <version>4.0.2</version>
+  <version>4.0.3</version>
   <packaging>pom</packaging>
 
   <name>Hipparchus</name>
@@ -251,6 +251,9 @@
     </contributor>
     <contributor>
       <name>Sergei Lebedev</name>
+    </contributor>
+    <contributor>
+      <name>Bastien Le Bihan</name>
     </contributor>
     <contributor>
       <name>Bob MacCallum</name>

@@ -71,10 +71,9 @@ at fork time.
 
  ---
 
-## 4.0.2 Release is out!
+## 4.0.3 Release is out!
 
-Hipparchus 4.0.2 is now available for download from the [Hipparchus download page](downloads.html) or on
-Maven central and its mirrors under the groupId **org.hipparchus**. Highlights in the 4.0.2 release are:
+Hipparchus 4.0.3 is now available for download from the [Hipparchus download page](downloads.html) or on
+Maven central and its mirrors under the groupId **org.hipparchus**. Highlights in the 4.0.3 release are:
 
-   * Fixed inconsistency between Abstract{Field}ODEStateInterpolator and {Field}DetectorBasedEventState for event time handling. 
-   * Fixes NaN appearing in second derivative for atan2 with (Field)UnivariateDerivative2 when argument has zero value.
+   * Fixed inconsistency between interpolated states when calling ODEStepHandler#handleStep at each event.
