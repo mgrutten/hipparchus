@@ -62,6 +62,15 @@ public interface ODEStepHandler {
     void handleStep(ODEStateInterpolator interpolator);
 
     /**
+     * Update the handler at the beginning of the step
+     * @param interpolator interpolator for the current step
+     * @since 4.0.3
+     */
+    default void updateOnStep(ODEStateInterpolator interpolator) {
+        // nothing by default
+    }
+
+    /**
      * Finalize integration.
      * @param finalState state at integration end
      * @since 2.0

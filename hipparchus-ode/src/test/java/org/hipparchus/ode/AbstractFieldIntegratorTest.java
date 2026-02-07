@@ -17,49 +17,53 @@
 
 package org.hipparchus.ode;
 
-import org.hipparchus.analysis.UnivariateFunction;
-import org.hipparchus.analysis.solvers.BracketedUnivariateSolver;
-import org.hipparchus.analysis.solvers.BracketingNthOrderBrentSolver;
+import org.hipparchus.Field;
+import org.hipparchus.analysis.solvers.BracketedRealFieldUnivariateSolver;
+import org.hipparchus.analysis.solvers.FieldBracketingNthOrderBrentSolver;
 import org.hipparchus.ode.events.Action;
-import org.hipparchus.ode.events.AdaptableInterval;
-import org.hipparchus.ode.events.ODEEventDetector;
-import org.hipparchus.ode.events.ODEEventHandler;
-import org.hipparchus.ode.nonstiff.EulerIntegrator;
-import org.hipparchus.ode.sampling.ODEStateInterpolator;
-import org.hipparchus.ode.sampling.ODEStepHandler;
+import org.hipparchus.ode.events.FieldAdaptableInterval;
+import org.hipparchus.ode.events.FieldODEEventDetector;
+import org.hipparchus.ode.events.FieldODEEventHandler;
+import org.hipparchus.ode.nonstiff.EulerFieldIntegrator;
+import org.hipparchus.ode.sampling.FieldODEStateInterpolator;
+import org.hipparchus.ode.sampling.FieldODEStepHandler;
+import org.hipparchus.util.Binary64;
+import org.hipparchus.util.Binary64Field;
+import org.hipparchus.util.MathArrays;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AbstractIntegratorTest {
+class AbstractFieldIntegratorTest {
 
     @Test
     void testIntegrateWithResetDerivativesAndEventDetector() {
         // GIVEN
-        final double finalTime = 1.;
-        final EulerIntegrator integrator = new EulerIntegrator(finalTime);
+        final Field<Binary64> field = Binary64Field.getInstance();
+        final Binary64 finalTime = new Binary64(1.);
+        final EulerFieldIntegrator<Binary64> integrator = new EulerFieldIntegrator<>(field, finalTime);
         final TestDetector detector = new TestDetector(0.5, Action.RESET_DERIVATIVES);
         integrator.addEventDetector(detector);
-        final TestProblem1 testProblem = new TestProblem1();
-        final ODEState initialState = new ODEState(0., new double[2]);
+        final TestFieldProblem1<Binary64> testProblem = new TestFieldProblem1<>(field);
+        final FieldODEState<Binary64> initialState = new FieldODEState<>(Binary64.ZERO, MathArrays.buildArray(field, 2));
         // WHEN
         integrator.integrate(testProblem, initialState, finalTime);
         // THEN
         assertTrue(detector.resetted);
     }
 
-
     @Test
     void testUpdateStepIsCalledOncePerStepWhileHandleStepIsCalledAtEachEvent() {
         // GIVEN
-        final double finalTime = 3.;
-        final EulerIntegrator integrator = new EulerIntegrator(finalTime);
+        final Field<Binary64> field = Binary64Field.getInstance();
+        final Binary64 finalTime = new Binary64(3.);
+        final EulerFieldIntegrator<Binary64> integrator = new EulerFieldIntegrator<>(field, finalTime);
         integrator.addStepHandler(new UpdateStepTestHandler());
         integrator.addEventDetector(new TestDetector(0.5, Action.CONTINUE));
         integrator.addEventDetector(new TestDetector(0.6, Action.CONTINUE));
-        final TestProblem1 testProblem = new TestProblem1();
-        final ODEState initialState = new ODEState(0., new double[2]);
+        final TestFieldProblem1<Binary64> testProblem = new TestFieldProblem1<>(field);
+        final FieldODEState<Binary64> initialState = new FieldODEState<>(Binary64.ZERO, MathArrays.buildArray(field, 2));
         // WHEN
         integrator.integrate(testProblem, initialState, finalTime);
         // THEN
@@ -67,7 +71,8 @@ class AbstractIntegratorTest {
         assertEquals(3, ((UpdateStepTestHandler) integrator.getStepHandlers().get(0)).getHandlerStepCounter());
     }
 
-    private static class TestDetector implements ODEEventDetector {
+    private static class TestDetector implements FieldODEEventDetector<Binary64> {
+
         boolean resetted = false;
         double rootTime;
         Action action;
@@ -78,14 +83,14 @@ class AbstractIntegratorTest {
         }
 
         @Override
-        public void reset(ODEStateAndDerivative intermediateState, double finalTime) {
-            ODEEventDetector.super.reset(intermediateState, finalTime);
+        public void reset(FieldODEStateAndDerivative<Binary64> intermediateState, Binary64 finalTime) {
+            FieldODEEventDetector.super.reset(intermediateState, finalTime);
             resetted = true;
         }
 
         @Override
-        public AdaptableInterval getMaxCheckInterval() {
-            return AdaptableInterval.of(1);
+        public FieldAdaptableInterval<Binary64> getMaxCheckInterval() {
+            return FieldAdaptableInterval.of(1);
         }
 
         @Override
@@ -94,34 +99,33 @@ class AbstractIntegratorTest {
         }
 
         @Override
-        public BracketedUnivariateSolver<UnivariateFunction> getSolver() {
-            return new BracketingNthOrderBrentSolver();
+        public BracketedRealFieldUnivariateSolver<Binary64> getSolver() {
+            return new FieldBracketingNthOrderBrentSolver<>(new Binary64(1e-14), new Binary64(1e-6), new Binary64(1e-15), 5);
         }
 
         @Override
-        public ODEEventHandler getHandler() {
+        public FieldODEEventHandler<Binary64> getHandler() {
             return (state, detector, increasing) -> action;
         }
 
         @Override
-        public double g(ODEStateAndDerivative state) {
-            return state.getTime() - rootTime;
+        public Binary64 g(FieldODEStateAndDerivative<Binary64> state) {
+            return state.getTime().subtract(rootTime);
         }
     }
 
-    
-    private static class UpdateStepTestHandler implements ODEStepHandler {
+    private static class UpdateStepTestHandler implements FieldODEStepHandler<Binary64> {
 
         private int handlerStepCounter = 0;
         private int updateStepCounter = 0;
 
         @Override
-        public void handleStep(ODEStateInterpolator interpolator) {
+        public void handleStep(FieldODEStateInterpolator<Binary64> interpolator) {
             handlerStepCounter++;
         }
 
         @Override
-        public void updateOnStep(ODEStateInterpolator interpolator) {
+        public void updateOnStep(FieldODEStateInterpolator<Binary64> interpolator) {
             updateStepCounter++;
         }
 
@@ -133,4 +137,5 @@ class AbstractIntegratorTest {
             return updateStepCounter;
         }
     }
+
 }

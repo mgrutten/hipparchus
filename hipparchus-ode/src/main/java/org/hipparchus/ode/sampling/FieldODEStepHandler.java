@@ -68,6 +68,15 @@ public interface FieldODEStepHandler<T extends CalculusFieldElement<T>> {
     void handleStep(FieldODEStateInterpolator<T> interpolator);
 
     /**
+     * Update the handler at the beginning of the step
+     * @param interpolator interpolator for the current step
+     * @since 4.0.3
+     */
+    default void updateOnStep(FieldODEStateInterpolator<T> interpolator) {
+        // nothing by default
+    }
+
+    /**
      * Finalize integration.
      * @param finalState state at integration end
      * @since 2.0
