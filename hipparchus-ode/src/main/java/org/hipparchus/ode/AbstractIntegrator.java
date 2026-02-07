@@ -306,6 +306,10 @@ public abstract class AbstractIntegrator implements ODEIntegrator {
         // set end of step
         stepEndEventsStates.forEach(s -> s.setStepEnd(currentState.getTime()));
 
+        for (final ODEStepHandler handler : stepHandlers) {
+            handler.updateOnStep(interpolator);
+        }
+
         // search for next events that may occur during the step
         final int orderingSign = interpolator.isForward() ? +1 : -1;
         final Queue<EventState> occurringEvents = new PriorityQueue<>(new Comparator<EventState>() {
