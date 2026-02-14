@@ -84,7 +84,7 @@ public class PolynomialModelFitter implements IModelFitter<PolynomialModelFitter
         this.degree = degree;
     }
 
-    /** {@inheritDoc. */
+    /** {@inheritDoc} */
     @Override
     public Model fitModel(final List<double[]> points) {
         // Reference: Wikipedia page "Polynomial regression"
