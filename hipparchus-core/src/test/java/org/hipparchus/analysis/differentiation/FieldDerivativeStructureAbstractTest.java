@@ -17,6 +17,13 @@
 
 package org.hipparchus.analysis.differentiation;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hipparchus.CalculusFieldElement;
 import org.hipparchus.CalculusFieldElementAbstractTest;
 import org.hipparchus.Field;
@@ -40,13 +47,6 @@ import org.hipparchus.util.MathArrays;
 import org.hipparchus.util.Precision;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -2362,8 +2362,9 @@ public abstract class FieldDerivativeStructureAbstractTest<T extends CalculusFie
         return qDS;
     }
 
+    @SuppressWarnings("unchecked")
     final FieldDerivativeStructure<T>[] creatIntermediateVariables(final FDSFactory<T> factory,
-                                                                   @SuppressWarnings("unchecked") FieldDerivativeStructure<T>... pBase) {
+                                                                   final FieldDerivativeStructure<T>... pBase) {
         final FieldDerivativeStructure<T>[] pIntermediate = MathArrays.buildArray(factory.getDerivativeField(), pBase.length);
         for (int i = 0; i < pBase.length; ++i) {
             pIntermediate[i] = factory.variable(i, pBase[i].getValue());
