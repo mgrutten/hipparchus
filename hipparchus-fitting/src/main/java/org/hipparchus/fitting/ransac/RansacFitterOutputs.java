@@ -16,6 +16,7 @@
  */
 package org.hipparchus.fitting.ransac;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class RansacFitterOutputs<M> {
      */
     public RansacFitterOutputs(final Optional<M> bestModel, final List<double[]> bestInliers, final IModelFitter<M> fitter) {
         this.bestModel = bestModel;
-        this.bestInliers = bestInliers;
+        this.bestInliers = new ArrayList<>(bestInliers);
         this.fitter = fitter;
     }
 
@@ -62,7 +63,7 @@ public class RansacFitterOutputs<M> {
      * @return the list of points used to determine the best model parameters
      */
     public List<double[]> getBestInliers() {
-        return bestInliers;
+        return new ArrayList<>(bestInliers);
     }
 
     /**

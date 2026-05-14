@@ -66,7 +66,7 @@ public class PolynomialModelFitter implements IModelFitter<PolynomialModelFitter
          * @return the coefficients of the polynomial model
          */
         public double[] getCoefficients() {
-            return coefficients;
+            return coefficients.clone();
         }
     }
 

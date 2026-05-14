@@ -30,6 +30,8 @@ import org.hipparchus.util.MathArrays;
  * <a href="https://en.wikipedia.org/wiki/Smoothstep">here</a>.
  */
 public class SmoothStepFactory {
+
+    /** Epsilon to check that normalized values are between [0:1]. */
     private static final double EPSILON = 1E-10;
 
     /**
