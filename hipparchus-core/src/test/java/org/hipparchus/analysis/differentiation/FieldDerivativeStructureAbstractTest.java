@@ -2335,7 +2335,7 @@ public abstract class FieldDerivativeStructureAbstractTest<T extends CalculusFie
         final FieldDerivativeStructure<T> ref = f.value(pBase);
 
         // intermediate variables as independent variables
-        final FieldDerivativeStructure<T>[] pIntermediate = creatIntermediateVariables(factoryP, pBase);
+        final FieldDerivativeStructure<T>[] pIntermediate = createIntermediateVariables(factoryP, pBase);
 
         // function of the intermediate variables
         final FieldDerivativeStructure<T> fI = f.value(pIntermediate);
@@ -2363,8 +2363,8 @@ public abstract class FieldDerivativeStructureAbstractTest<T extends CalculusFie
     }
 
     @SuppressWarnings("unchecked")
-    final FieldDerivativeStructure<T>[] creatIntermediateVariables(final FDSFactory<T> factory,
-                                                                   final FieldDerivativeStructure<T>... pBase) {
+    final FieldDerivativeStructure<T>[] createIntermediateVariables(final FDSFactory<T> factory,
+                                                                    final FieldDerivativeStructure<T>... pBase) {
         final FieldDerivativeStructure<T>[] pIntermediate = MathArrays.buildArray(factory.getDerivativeField(), pBase.length);
         for (int i = 0; i < pBase.length; ++i) {
             pIntermediate[i] = factory.variable(i, pBase[i].getValue());
