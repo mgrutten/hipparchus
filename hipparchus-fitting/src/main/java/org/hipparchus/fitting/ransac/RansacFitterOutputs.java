@@ -36,7 +36,7 @@ public class RansacFitterOutputs<M> {
     private final Optional<M> bestModel;
 
     /** List of points used to determine the best model parameters. */
-    private final List<double[]> bestInliers;
+    private final List<Fittable> bestInliers;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class RansacFitterOutputs<M> {
      * @param bestInliers list of points used to determine the best model parameters
      * @param fitter mathematical model fitter used by RANSAC algorithm
      */
-    public RansacFitterOutputs(final Optional<M> bestModel, final List<double[]> bestInliers, final IModelFitter<M> fitter) {
+    public RansacFitterOutputs(final Optional<M> bestModel, final List<Fittable> bestInliers, final IModelFitter<M> fitter) {
         this.bestModel = bestModel;
         this.bestInliers = new ArrayList<>(bestInliers);
         this.fitter = fitter;
@@ -62,7 +62,7 @@ public class RansacFitterOutputs<M> {
      * Get the list of points used to determine the best model parameters.
      * @return the list of points used to determine the best model parameters
      */
-    public List<double[]> getBestInliers() {
+    public List<Fittable> getBestInliers() {
         return new ArrayList<>(bestInliers);
     }
 
@@ -73,7 +73,7 @@ public class RansacFitterOutputs<M> {
      * @return the list of points below the given threshold based on the computed best model parameters
      *         (can be empty if the all points are above the threshold or if no best model has been found)
      */
-    public List<double[]> filterPointsBelowThreshold(final List<double[]> points, final double threshold) {
+    public List<Fittable> filterPointsBelowThreshold(final List<Fittable> points, final double threshold) {
         return bestModel.map(model -> points.stream().filter(point -> fitter.computeModelError(model, point) < threshold).collect(Collectors.toList()))
                         .orElse(Collections.emptyList());
     }
