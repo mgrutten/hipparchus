@@ -45,9 +45,6 @@ import org.hipparchus.util.Pair;
  *     w_i = pi / (n + 1) sin^2(i pi / (n + 1))
  * </pre>
  *
- * <p>The returned points are ordered from negative to positive, so they can be
- * used directly with Hipparchus field Gauss integrators.</p>
- *
  * @param <T> type of the field elements
  */
 public class FieldChebyshevSecondKindRuleFactory<T extends CalculusFieldElement<T>>
