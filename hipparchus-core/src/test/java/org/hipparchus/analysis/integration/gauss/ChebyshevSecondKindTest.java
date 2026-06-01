@@ -289,10 +289,8 @@ class ChebyshevSecondKindTest {
                                                  final double sz,
                                                  final double hbr,
                                                  final int order) {
-        final ChebyshevSecondKindRuleFactory factory = new ChebyshevSecondKindRuleFactory();
-        final Pair<double[], double[]> rule = factory.getRule(order);
-
-        final GaussIntegrator integrator = new GaussIntegrator(rule.getFirst(), rule.getSecond());
+        final GaussIntegratorFactory factory = new GaussIntegratorFactory();
+        final GaussIntegrator integrator = factory.chebyshevSecondKind(order);
 
         final double sqrt2 = FastMath.sqrt(2.0);
         final double dx = sqrt2 * sx;

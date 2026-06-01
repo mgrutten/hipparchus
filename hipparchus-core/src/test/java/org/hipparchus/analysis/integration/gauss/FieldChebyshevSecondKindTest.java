@@ -212,11 +212,9 @@ class FieldChebyshevSecondKindTest {
                                                    final Binary64 sz,
                                                    final Binary64 hbr,
                                                    final int order) {
-        final FieldChebyshevSecondKindRuleFactory<Binary64> factory =
-                new FieldChebyshevSecondKindRuleFactory<>(Binary64Field.getInstance());
-        final Pair<Binary64[], Binary64[]> rule = factory.getRule(order);
-
-        final FieldGaussIntegrator<Binary64> integrator = new FieldGaussIntegrator<>(rule);
+        final FieldGaussIntegratorFactory<Binary64> factory =
+                new FieldGaussIntegratorFactory<>(Binary64Field.getInstance());
+        final FieldGaussIntegrator<Binary64> integrator = factory.chebyshevSecondKind(order);
 
         final Binary64 sqrt2 = FastMath.sqrt(new Binary64(2.0));
         final Binary64 dx = sx.multiply(sqrt2);
